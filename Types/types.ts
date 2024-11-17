@@ -8,3 +8,12 @@ export interface Driver {
   nearestFraindPhone: string;
   liveIn: number;
 }
+
+export interface LoginResponse {
+  token: string;
+  expiration: string;
+  fullName: string;
+  uesrType: string;
+  userPlace: string;
+  typee: string;
+}

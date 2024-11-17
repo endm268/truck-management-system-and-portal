@@ -1,14 +1,15 @@
-
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth"; // Adjust the import path as necessary
 import { redirect } from "next/navigation";
 
 export default async function Dashboard() {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    redirect("/login");
+  }
 
   redirect("/dashboard/overview");
-  // // Redirect based on user role directly from the server component
-  // if (user.role === "admin" || user.role === "user") {
-  //   return 
-  // } else {
-  //   // Redirect to a different page for other roles or an error page if needed
-  //   return redirect("/not-authorized");
-  // }
+
+  return null;
 }

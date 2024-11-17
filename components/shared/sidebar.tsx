@@ -1,33 +1,30 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-// icons
 import { Button } from "../ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, LogOut } from "lucide-react";
 import { useState } from "react";
 import { navLinks } from "@/constants/navLinks";
-
+import { signOut } from "next-auth/react"; // Import signOut from NextAuth
 
 interface SidebarProps {
   role: string;
 }
 
-// Sidebar component
 const Sidebar = ({ role }: SidebarProps) => {
   const [collapse, setCollapse] = useState<boolean>(false);
   const pathname = usePathname();
 
+  const handleLogout = () => {
+      signOut({ callbackUrl: "/login" });
+  };
 
   return (
     <div className="sidebar">
       <div className="sidebar-container">
         {/* Sidebar toggle button */}
         <div className="sidebar-toggle">
-          <Button
-            onClick={() => {
-              setCollapse(!collapse);
-            }}
-          >
+          <Button onClick={() => setCollapse(!collapse)}>
             {!collapse ? (
               <ChevronRight className="w-4 h-4" />
             ) : (
@@ -43,7 +40,6 @@ const Sidebar = ({ role }: SidebarProps) => {
             <nav className="flex flex-col overflow-auto lg:flex">
               <ul className="flex w-full flex-col items-start gap-2 md:flex">
                 {navLinks.map((link) => {
-                  // Check if the current role is allowed to see the link
                   if (role && !link.visible?.includes(role)) return null;
 
                   const isActive = link.route === pathname;
@@ -72,6 +68,15 @@ const Sidebar = ({ role }: SidebarProps) => {
                 })}
               </ul>
             </nav>
+
+            {/* Expanded Logout Button */}
+            <Button
+              onClick={handleLogout}
+              className="mt-8 w-full bg-rose-700 hover:bg-rose-500 text-white flex gap-4"
+            >
+              <LogOut />
+              <span>تسجيل الخروج</span>
+            </Button>
           </div>
         ) : (
           <div className="sidebar-collapsed mt-8">
@@ -79,12 +84,10 @@ const Sidebar = ({ role }: SidebarProps) => {
             <nav className="flex flex-col overflow-auto lg:flex">
               <ul className="flex w-full flex-col items-start gap-2 md:flex">
                 {navLinks.map((link) => {
-                  // Check if the current role is allowed to see the link
-
                   const isActive = link.route === pathname;
                   const IconComponent = link.icon;
 
-                  if (link.visible?.includes(role as string))
+                  if (link.visible?.includes(role))
                     return (
                       <li
                         key={link.route}
@@ -105,9 +108,16 @@ const Sidebar = ({ role }: SidebarProps) => {
                 })}
               </ul>
             </nav>
+
+            {/* Collapsed Logout Button */}
+            <Button
+              onClick={handleLogout}
+              className="mt-8 w-full bg-rose-700 hover:bg-rose-500 text-white flex justify-center"
+            >
+              <LogOut className="h-5 w-5" />
+            </Button>
           </div>
         )}
-       {/* <Button>تسجيل الخروج</Button> */}
       </div>
     </div>
   );

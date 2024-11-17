@@ -60,7 +60,7 @@ interface DriverFormProps {
   id?: string; // Add id parameter for identifying the driver in update mode
 }
 
-const DriverForm = ({ isUpdateMode = false, id }: DriverFormProps) => {
+const Truck_from = ({ isUpdateMode = false, id }: DriverFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const { selectedDriver, setSelectedDriver } = useDriverStore();
@@ -90,8 +90,6 @@ const DriverForm = ({ isUpdateMode = false, id }: DriverFormProps) => {
     setIsSubmitting(true);
     try {
       if (isUpdateMode && id !== undefined) {
-        
-        
         await updateDriver(id, values); // Ensure this call is correct
         toast({
           title: "نجاح",
@@ -261,4 +259,4 @@ const DriverForm = ({ isUpdateMode = false, id }: DriverFormProps) => {
   );
 };
 
-export default DriverForm;
+export default Truck_from;

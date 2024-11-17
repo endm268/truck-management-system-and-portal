@@ -17,7 +17,7 @@ import {
 import { useRouter } from "next/navigation";
 import HeaderPage from "@/components/shared/headerPage";
 
-const Driver_view = () => {
+const Truck_view = () => {
   const { selectedDriver, setSelectedDriver } = useDriverStore();
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const router = useRouter();
@@ -148,4 +148,4 @@ const Driver_view = () => {
   );
 };
 
-export default Driver_view;
+export default Truck_view;

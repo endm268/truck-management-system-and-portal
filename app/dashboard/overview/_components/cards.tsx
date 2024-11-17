@@ -3,14 +3,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartCandlestick, KeySquare, SquarePlus, TicketSlash } from "lucide-react";
 
 interface CardsProps {
-  role: "admin" | "user";
+  role: string;
 }
 
 const Cards: React.FC<CardsProps> = ({ role }) => {
   return (
     <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
       {/* Card 1 - Visible to admin and user */}
-      {(role === "admin" || role === "user") && (
+      {(role === "admin" ) && (
         <Card
           className="
     dark:odd:border-b-customColors-darkPrimary dark:even:border-b-customColors-darkSecondary 
@@ -38,7 +38,7 @@ const Cards: React.FC<CardsProps> = ({ role }) => {
       )}
 
       {/* Card 2 - Visible to admin only */}
-      {role === "admin" && (
+      {role === "admin" || role === "bitah" && (
         <Card
           className="
     dark:odd:border-b-customColors-darkPrimary dark:even:border-b-customColors-darkSecondary 
@@ -66,7 +66,7 @@ const Cards: React.FC<CardsProps> = ({ role }) => {
       )}
 
       {/* Card 3 - Visible to admin and user */}
-      {(role === "admin" || role === "user") && (
+      {(role === "admin" || role === "matarrish") && (
         <Card
           className="
     dark:odd:border-b-customColors-darkPrimary dark:even:border-b-customColors-darkSecondary 
@@ -91,7 +91,7 @@ const Cards: React.FC<CardsProps> = ({ role }) => {
       )}
 
       {/* Card 4 - Visible to admin only */}
-      {role === "admin" && (
+      {role === "admin" || role === "jiraar" && (
         <Card
           className="
     dark:odd:border-b-customColors-darkPrimary dark:even:border-b-customColors-darkSecondary 

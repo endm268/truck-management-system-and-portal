@@ -35,17 +35,17 @@ export function DataTableToolbar<TData>({
   };
 
   return (
-    <div className="flex flex-wrap items-center justify-between">
+    <div className="flex flex-wrap items-center justify-between px-6">
       <div className="flex flex-1 flex-wrap items-center gap-2">
         <Input
-          placeholder="Filter labels..."
-          value={(table.getColumn("note")?.getFilterValue() as string) ?? ""}
+          placeholder=" بحث ..."
+          value={(table.getState().globalFilter as string) ?? ""}
           onChange={(event) => {
-            table.getColumn("note")?.setFilterValue(event.target.value);
+            table.setGlobalFilter(event.target.value);
           }}
           className="h-8 w-[150px] lg:w-[250px]"
         />
-        {table.getColumn("category") && (
+        {/* {table.getColumn("category") && (
           <DataTableFacetedFilter
             column={table.getColumn("category")}
             title="Category"
@@ -58,7 +58,7 @@ export function DataTableToolbar<TData>({
             title="Type"
             options={incomeType}
           />
-        )}
+        )} */}
         {isFiltered && (
           <Button
             variant="ghost"
@@ -69,12 +69,12 @@ export function DataTableToolbar<TData>({
             <Cross2Icon className="ml-2 h-4 w-4" />
           </Button>
         )}
-        <CalendarDatePicker
+        {/* <CalendarDatePicker
           date={dateRange}
           onDateSelect={handleDateSelect}
           className="h-9 w-[250px]"
           variant="outline"
-        />
+        /> */}
       </div>
 
       <div className="flex items-center gap-2">

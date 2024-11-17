@@ -1,11 +1,19 @@
-import { NavLinkDetail } from "@/Types/Types";
 import {
   LayoutDashboard,
   Users,
   Truck,
   KeySquare,
   NotepadText,
+  LucideIcon,
 } from "lucide-react";
+
+interface NavLinkDetail {
+  id: number;
+  label: string;
+  route: string;
+  icon: LucideIcon;
+  visible: string[];
+}
 
 export const navLinks: NavLinkDetail[] = [
   {
@@ -13,7 +21,7 @@ export const navLinks: NavLinkDetail[] = [
     label: "لوحة التحكم",
     route: "/dashboard/overview",
     icon: LayoutDashboard,
-    visible: ["admin", "user"],
+    visible: ["admin", "financial", "bitah", "jiraar", "matarish"],
   },
   {
     id: 2,
@@ -27,21 +35,21 @@ export const navLinks: NavLinkDetail[] = [
     label: "السائقين",
     route: "/dashboard/drivers",
     icon: KeySquare,
-    visible: ["admin", "user"],
+    visible: ["admin", "bitah", "jiraar", "matarish"],
   },
   {
     id: 4,
     label: " شاحنات",
     route: "/dashboard/trucks",
     icon: Truck,
-    visible: ["admin", "user"],
+    visible: ["admin", "bitah", "jiraar", "matarish"],
   },
   {
     id: 5,
     label: " طابور",
     route: "/dashboard/queuis",
     icon: NotepadText,
-    visible: ["admin", "user"],
+    visible: ["admin", "financial"],
   },
 
   // Add more pages as needed
