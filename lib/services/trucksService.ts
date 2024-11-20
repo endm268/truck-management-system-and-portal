@@ -4,10 +4,8 @@ import { getAuthHeaders } from "../helper";
 
 const BASE_URL = "http://10.10.10.74:2001/api/Cars";
 
-
-
-// Fetch all drivers
-export async function getDrivers(searchTerm: string = "") {
+// Fetch all cars
+export async function getCars(searchTerm: string = "") {
   try {
     const headers = await getAuthHeaders();
 
@@ -17,61 +15,52 @@ export async function getDrivers(searchTerm: string = "") {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`Error fetching drivers: ${response.status} ${response.statusText}`);
+      console.error(
+        `Error fetching cars: ${response.status} ${response.statusText}`
+      );
       console.error(`Response body: ${errorText}`);
-      throw new Error(`Failed to fetch drivers: ${response.status} ${response.statusText}`);
-    }
-
-    const drivers = await response.json();
-    if (searchTerm) {
-      return drivers.filter((driver: any) =>
-        driver.fullName.toLowerCase().includes(searchTerm.toLowerCase())
+      throw new Error(
+        `Failed to fetch cars: ${response.status} ${response.statusText}`
       );
     }
-    return drivers;
-  } catch (error) {
-    console.error("Error fetching drivers:", error);
-    throw new Error("Failed to fetch drivers");
-  }
-}
 
+    const cars = await response.json();
 
-// Fetch a single driver by ID
-export async function getDriverById(id: number) {
-  try {
-    const headers = await getAuthHeaders();
-
-    const response = await fetch(`${BASE_URL}/Display-Drivers/${id}`, {
-      cache: "no-store",
-      headers,
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch driver with ID ${id}`);
+    if (searchTerm) {
+      return cars.filter((car: any) =>
+        car.driverName.toLowerCase().includes(searchTerm.toLowerCase())
+      );
     }
 
-    return await response.json();
+    return cars;
   } catch (error) {
-    console.error(`Error fetching driver with ID ${id}:`, error);
-    throw new Error("Failed to fetch driver");
+    console.error("Error fetching cars:", error);
+    throw new Error("Failed to fetch cars");
   }
 }
 
-// Add a new driver
-export async function addDriver(driverData: any) {
+// Add a new car
+export async function addCar(carData: any) {
   try {
     const headers = await getAuthHeaders();
 
-    const response = await fetch(`${BASE_URL}/New-Driver`, {
+    console.log("Request Data:", carData);
+
+    const response = await fetch(`${BASE_URL}/New-Car`, {
       method: "POST",
-      headers,
-      body: JSON.stringify(driverData),
+      headers: {
+        ...headers,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(carData),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`Error adding driver: ${errorText}`);
-      throw new Error(`Failed to add driver. Status: ${response.status}`);
+      console.error(`Error adding car: ${errorText}`);
+      throw new Error(
+        `Failed to add car. Status: ${response.status}. Details: ${errorText}`
+      );
     }
 
     const contentType = response.headers.get("content-type");
@@ -82,41 +71,39 @@ export async function addDriver(driverData: any) {
       return await response.text();
     }
   } catch (error) {
-    console.error("Error adding driver:", error);
-    throw new Error("Failed to add driver");
+    console.error("Error adding car:", error);
+    throw new Error("Failed to add car");
   }
 }
 
-
-// Update an existing driver
-export async function updateDriver(id: string, driverData: any) {
+// Update an existing car
+export async function updateCar(id: number, carData: any) {
   try {
     const headers = await getAuthHeaders();
 
-    // Convert 'id' and 'liveIn' to numbers
     const dataToSend = {
-      id: parseInt(id, 10),
-      ...driverData,
-      liveIn: parseInt(driverData.liveIn, 10), // Ensure 'liveIn' is a number
+      id: id,
+      workId: carData.workId,
+      boardNumber: carData.boardNumber,
+      trailerNumber: carData.trailerNumber,
+      typee: carData.typee,
+      color: carData.color,
+      driverId: carData.driverId,
     };
 
-    console.log("here 1 ");
-    console.log("data", driverData);
-    console.log("id", id);
-    console.log("headers", headers);
-    console.log("dataToSend", dataToSend);
+    console.log("Request Payload:", dataToSend);
 
-    const response = await fetch(`${BASE_URL}/Update-Driver`, {
-      // Corrected endpoint
+    const response = await fetch(`${BASE_URL}/Update-Car`, {
       method: "PUT",
-      headers,
+      headers: {
+        ...headers,
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(dataToSend),
     });
 
-    // Get the Content-Type header
     const contentType = response.headers.get("content-type");
 
-    // Read the response based on Content-Type
     let responseBody: any;
     if (contentType && contentType.includes("application/json")) {
       responseBody = await response.json();
@@ -126,30 +113,27 @@ export async function updateDriver(id: string, driverData: any) {
 
     if (!response.ok) {
       console.error(
-        `Error updating driver: Status ${response.status} ${response.statusText} - ${responseBody}`
+        `Error updating car: Status ${response.status} ${response.statusText} - ${responseBody}`
       );
       throw new Error(
-        `Failed to update driver. Status: ${response.status} - ${response.statusText}`
+        `Failed to update car. Status: ${response.status} - ${response.statusText}`
       );
     }
 
-    console.log("Driver updated successfully:", responseBody);
+    console.log("Car updated successfully:", responseBody);
     return responseBody;
   } catch (error) {
-    console.error(`Error updating driver with ID ${id}:`, error);
-    throw new Error("Failed to update driver");
+    console.error(`Error updating car with ID ${id}:`, error);
+    throw new Error("Failed to update car");
   }
 }
 
-// Delete a driver by ID
-export async function deleteDriver(id: number): Promise<{ message: string }> {
+// Delete a car by ID
+export async function deleteCar(id: number): Promise<{ message: string }> {
   try {
     const headers = await getAuthHeaders();
-    console.log("here 2 ");
-    console.log("id", id);
-    console.log("headers", headers);
-    
-    const response = await fetch(`${BASE_URL}/Delete-Driver/${id}`, {
+
+    const response = await fetch(`${BASE_URL}/Delete-Car/${id}`, {
       method: "DELETE",
       headers,
     });
@@ -157,23 +141,61 @@ export async function deleteDriver(id: number): Promise<{ message: string }> {
     if (!response.ok) {
       const errorText = await response.text();
       console.error(
-        `Error deleting driver: ${response.status} ${response.statusText} - ${errorText}`
+        `Error deleting car: ${response.status} ${response.statusText} - ${errorText}`
       );
-      throw new Error(`Failed to delete driver. Status: ${response.status}`);
+      throw new Error(`Failed to delete car. Status: ${response.status}`);
     }
 
-    // Assuming the server returns a JSON response on successful deletion
     const contentType = response.headers.get("content-type");
     if (contentType && contentType.includes("application/json")) {
       const data = await response.json();
-      return { message: data.message || "Driver deleted successfully." };
+      return { message: data.message || "Car deleted successfully." };
     } else {
-      // Handle plain text responses
       const text = await response.text();
-      return { message: text || "Driver deleted successfully." };
+      return { message: text || "Car deleted successfully." };
     }
   } catch (error: any) {
-    console.error(`Error deleting driver with ID ${id}:`, error);
-    throw new Error(error.message || "Failed to delete driver.");
+    console.error(`Error deleting car with ID ${id}:`, error);
+    throw new Error(error.message || "Failed to delete car.");
+  }
+}
+
+// change Car Owner a car by ID
+export async function changeCarOwner(
+  carId: number,
+  newOwnerId: number
+): Promise<{ message: string }> {
+  try {
+    const headers = await getAuthHeaders();
+
+    const response = await fetch(
+      `${BASE_URL}/ChangeCarOwner/${carId}/${newOwnerId}`,
+      {
+        method: "PUT",
+        headers,
+      }
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(
+        `Error changing car owner: ${response.status} ${response.statusText} - ${errorText}`
+      );
+      throw new Error(
+        `Failed to change car owner. Status: ${response.status} ${response.statusText}`
+      );
+    }
+
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+      const data = await response.json();
+      return { message: data.message || "Car owner changed successfully." };
+    } else {
+      const text = await response.text();
+      return { message: text || "Car owner changed successfully." };
+    }
+  } catch (error: any) {
+    console.error(`Error changing owner for car ID ${carId}:`, error);
+    throw new Error(error.message || "Failed to change car owner.");
   }
 }

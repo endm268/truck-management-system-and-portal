@@ -1,7 +1,8 @@
+"use client";
 import { Row } from "@tanstack/react-table";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { useDriverStore } from "@/stores/useDriverStore";
+import { useTruckStore } from "@/stores/useTruckStore";
 import { useState } from "react";
 import {
   AlertDialog,
@@ -14,9 +15,11 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Eye, Pen, Trash } from "lucide-react";
-import { deleteDriver } from "@/lib/services/driverService";
+import { Eye, Pen, Trash, User } from "lucide-react";
+import { deleteCar, changeCarOwner } from "@/lib/services/trucksService";
 import { useToast } from "@/hooks/use-toast";
+import DriverDropdown from "../input/DriverDropdown";
+
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -24,64 +27,87 @@ interface DataTableRowActionsProps<TData> {
 
 export function DataTableRowActions<
   TData extends {
-    driverId: string | number | undefined;
+    carId: number;
+    driverId?: string | number | undefined;
     id?: string | number;
   }
 >({ row }: DataTableRowActionsProps<TData>) {
- 
-
-    const router = useRouter();
-  const setSelectedDriver = useDriverStore((state) => state.setSelectedDriver);
-  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const router = useRouter();
+  const setSelectedTruck = useTruckStore((state) => state.setSelectedTruck);
+  const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false); // State for delete dialog
+  const [isChangeOwnerAlertOpen, setIsChangeOwnerAlertOpen] = useState(false); // State for change owner dialog
+  const [isChangingOwner, setIsChangingOwner] = useState(false);
+  const [newOwnerId, setNewOwnerId] = useState<string | undefined>();
   const { toast } = useToast();
 
-  // Extract the driver's ID from the row
-  const id = row.original.driverId;
+  // Extract the truck's ID from the row
+  const id = row.original.carId;
 
   const handleView = () => {
     if (!id) return;
-    setSelectedDriver(row.original);
-    router.push(`/dashboard/drivers/${id}`);
+    setSelectedTruck(row.original);
+    router.push(`/dashboard/trucks/${id}`);
   };
 
   const handleEdit = () => {
     if (!id) return;
-    setSelectedDriver(row.original);
-    router.push(`/dashboard/drivers/${id}/update`);
+    setSelectedTruck(row.original);
+    router.push(`/dashboard/trucks/${id}/update`);
   };
 
   const handleDelete = async () => {
     if (!id) return;
 
     try {
-      const result = await deleteDriver(id as number);
-      console.log("Driver deleted successfully:", result.message);
-      // Show success toast notification
+      const result = await deleteCar(id);
+      console.log("Truck deleted successfully:", result.message);
       toast({
         variant: "default",
         title: "تم الحذف بنجاح",
-        description: `تم حذف السائق ذو المعرف ${id} بنجاح.`,
+        description: `تم حذف الشاحنة ذات المعرف ${id} بنجاح.`,
       });
-      
-      window.location.reload();
+      window.location.reload(); // Refresh the page or table to reflect changes
+      setIsDeleteAlertOpen(false);
     } catch (error: any) {
       console.error("Error during delete request:", error);
-
-      // Show error toast notification
       toast({
         variant: "destructive",
         title: "حدث خطأ",
-        description: "تعذر حذف السائق. حاول مجددًا لاحقًا.",
+        description: "تعذر حذف الشاحنة. حاول مجددًا لاحقًا.",
       });
     }
-
-    // Close the alert dialog
-    setIsAlertOpen(false);
   };
 
+  const handleChangeOwner = async () => {
+    if (!id || !newOwnerId) return;
+
+    setIsChangingOwner(true);
+    try {
+      const result = await changeCarOwner(id, parseInt(newOwnerId, 10));
+      console.log("Owner changed successfully:", result.message);
+      toast({
+        variant: "default",
+        title: "تم التغيير بنجاح",
+        description: `تم تغيير مالك الشاحنة بنجاح.`,
+      });
+      setNewOwnerId(undefined);
+      setIsChangeOwnerAlertOpen(false);
+      window.location.reload(); // Refresh the page or table to reflect changes
+    } catch (error: any) {
+      console.error("Error during change owner request:", error);
+      toast({
+        variant: "destructive",
+        title: "حدث خطأ",
+        description: "تعذر تغيير مالك الشاحنة. حاول مجددًا لاحقًا.",
+      });
+    } finally {
+      setIsChangingOwner(false);
+    }
+  };
 
   return (
     <div className="flex space-x-2 rtl:space-x-reverse" dir="rtl">
+      {/* View Button */}
       <Button
         variant="outline"
         onClick={handleView}
@@ -91,6 +117,7 @@ export function DataTableRowActions<
         <span>عرض</span>
       </Button>
 
+      {/* Edit Button */}
       <Button
         variant="outline"
         onClick={handleEdit}
@@ -100,7 +127,51 @@ export function DataTableRowActions<
         <span>تحديث</span>
       </Button>
 
-      <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
+      {/* Change Owner Button */}
+      <AlertDialog
+        open={isChangeOwnerAlertOpen}
+        onOpenChange={setIsChangeOwnerAlertOpen}
+      >
+        <AlertDialogTrigger asChild>
+          <Button
+            variant="outline"
+            className="text-gray-700 flex items-center space-x-1 rtl:space-x-reverse"
+          >
+            <User className="h-4 w-4" />
+            <span>تغيير المالك</span>
+          </Button>
+        </AlertDialogTrigger>
+        <AlertDialogContent dir="rtl">
+          <AlertDialogHeader>
+            <AlertDialogTitle className=" text-right">
+              تغيير المالك
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-right">
+              اختر المالك الجديد للشاحنة.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="p-4">
+            <DriverDropdown
+              value={newOwnerId}
+              onChange={(value) => setNewOwnerId(value)}
+            />
+          </div>
+          <AlertDialogFooter className="flex rtl:space-x-reverse">
+            <AlertDialogCancel onClick={() => setIsChangeOwnerAlertOpen(false)}>
+              إلغاء
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleChangeOwner}
+              disabled={isChangingOwner || !newOwnerId}
+            >
+              {isChangingOwner ? "جارٍ التغيير..." : "تغيير"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Delete Button */}
+      <AlertDialog open={isDeleteAlertOpen} onOpenChange={setIsDeleteAlertOpen}>
         <AlertDialogTrigger asChild>
           <Button
             variant="outline"
@@ -121,7 +192,7 @@ export function DataTableRowActions<
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="flex rtl:space-x-reverse">
-            <AlertDialogCancel onClick={() => setIsAlertOpen(false)}>
+            <AlertDialogCancel onClick={() => setIsDeleteAlertOpen(false)}>
               إلغاء
             </AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete}>حذف</AlertDialogAction>

@@ -7,7 +7,7 @@ const BASE_URL = "http://10.10.10.74:2001/api/Drivers";
 
 
 // Fetch all drivers
-export async function getTrucks(searchTerm: string = "") {
+export async function getDrivers(searchTerm: string = "") {
   try {
     const headers = await getAuthHeaders();
 

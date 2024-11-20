@@ -1,13 +1,13 @@
 import HeaderPage from '@/components/shared/headerPage';
 import { KeySquare, Plus, Redo2 } from 'lucide-react';
 import React from 'react'
-import Driver_from from '../_components/trucks_from';
+import Truck_from from '../_components/trucks_from';
 
-const Create_user = () => {
+const Create_Trucks = () => {
   return (
     <div className="flex flex-col gap-4">
       <HeaderPage
-        title="اضافىة سائق"
+        title="اضافىة شحنة"
         icon={
           <KeySquare className="h-6 w-6 text-gray-600 dark:text-gray-300" />
         }
@@ -16,10 +16,10 @@ const Create_user = () => {
         }
       />
       <div className='container px-2'>
-        <Driver_from />
+        <Truck_from />
       </div>
     </div>
   );
 }
 
-export default Create_user
+export default Create_Trucks;

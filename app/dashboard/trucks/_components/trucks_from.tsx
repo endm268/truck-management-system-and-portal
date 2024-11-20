@@ -14,118 +14,119 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { useTruckStore } from "@/stores/useTruckStore";
 import InputWithEndIcon from "./input/Input-with-end-icon";
-import { Phone, User } from "lucide-react";
-import InputNumberIcon from "./input/Input-number-icon";
-import { useDriverStore } from "@/stores/useDriverStore";
-import { addDriver, updateDriver } from "@/lib/services/driverService"; // Import the service functions
-import { log } from "console";
+import { Car } from "lucide-react";
+import { addCar, updateCar } from "@/lib/services/trucksService";
+
+import CarTypeDropdown from "./input/CarTypeDropdown";
+import CarColorDropdown from "./input/CarColorDropdown";
+import CarAreaDropdown from "./input/CarArewaDropdown";
+import DriverDropdown from "./input/DriverDropdown";
 
 // Define form schema with Zod
 const formSchema = z.object({
-  fullName: z
+  workId: z
     .string()
-    .min(2, { message: "يجب أن يكون الاسم الكامل مكونًا من حرفين على الأقل." }),
-  phoneNumber: z
-    .string()
-    .min(2, { message: "يجب أن يحتوي رقم الهاتف على حرفين على الأقل." })
-    .regex(/^\d+$/, { message: "يجب أن يحتوي رقم الهاتف على أرقام فقط." }),
-  cardId: z
-    .string()
-    .min(2, { message: "يجب أن يحتوي رقم البطاقة على حرفين على الأقل." })
-    .regex(/^\d+$/, { message: "يجب أن يحتوي رقم البطاقة على أرقام فقط." }),
-  driverCardId: z
-    .string()
-    .min(2, { message: "يجب أن يحتوي رقم رخصة القيادة على حرفين على الأقل." })
-    .regex(/^\d+$/, {
-      message: "يجب أن يحتوي رقم رخصة القيادة على أرقام فقط.",
-    }),
-  nearestFraindName: z
-    .string()
-    .min(2, { message: "يجب أن يحتوي اسم أقرب صديق على حرفين على الأقل." }),
-  nearestFraindPhone: z
-    .string()
-    .min(2, { message: "يجب أن يحتوي رقم هاتف الصديق على حرفين على الأقل." })
-    .regex(/^\d+$/, { message: "يجب أن يحتوي رقم هاتف الصديق على أرقام فقط." }),
-  liveIn: z
-    .string()
-    .min(1, { message: "يجب أن يحتوي العنوان على حرفين على الأقل." }),
+    .regex(/^\d+$/, { message: "يجب أن يحتوي رقم العمل على أرقام فقط." }),
+  boardNumber: z.string().min(1, { message: "يجب إدخال رقم الطارقة." }),
+  trailerNumber: z.string().min(1, { message: "يجب إدخال رقم المقطورة." }),
+  typee: z.string().min(1, { message: "يرجى اختيار نوع السيارة." }),
+  color: z.string().min(1, { message: "يرجى اختيار لون السيارة." }),
+  // placeId: z.string().min(1, { message: "يرجى اختيار المنطقة." }),
+  driverId: z.string().min(1, { message: "يرجى اختيار السائق." }),
 });
 
-// Define component with props for update mode
-interface DriverFormProps {
+interface Truck_fromProps {
   isUpdateMode?: boolean;
-  id?: string; // Add id parameter for identifying the driver in update mode
+  id?: string;
 }
 
-const Truck_from = ({ isUpdateMode = false, id }: DriverFormProps) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+const Truck_from = ({ isUpdateMode = false, id }: Truck_fromProps) => {
   const { toast } = useToast();
-  const { selectedDriver, setSelectedDriver } = useDriverStore();
-  console.log(id);
-  // Define form setup with default values based on update mode
+  const { selectedTruck } = useTruckStore(); // Get the selected truck from the store
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Initialize the form with default values
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues:
-      isUpdateMode && selectedDriver
+      isUpdateMode && selectedTruck
         ? {
-            ...selectedDriver,
-            liveIn: String(selectedDriver.liveIn), // Convert liveIn to a string
+            workId: selectedTruck.workNumber?.toString() || "",
+            boardNumber: selectedTruck.boardNumber || "",
+            trailerNumber: selectedTruck.trailerNumber || "",
+            typee: selectedTruck.carTypeId?.toString() || "",
+            color: selectedTruck.colorId?.toString() || "",
+            // placeId: selectedTruck.areaId?.toString() || "",
+            driverId: selectedTruck.driverId?.toString() || "",
           }
         : {
-            fullName: "",
-            phoneNumber: "",
-            cardId: "",
-            driverCardId: "",
-            nearestFraindName: "",
-            nearestFraindPhone: "",
-            liveIn: "", // Ensure liveIn is an empty string by default
+            workId: "",
+            boardNumber: "",
+            trailerNumber: "",
+            typee: "",
+            color: "",
+            // placeId: "",
+            driverId: "",
           },
   });
 
   // Define the submit handler for creating or updating
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
+    console.log("values", values);
+    
+    const carData = {
+      id: isUpdateMode && id ? parseInt(id, 10) : 0,
+      workId: parseInt(values.workId, 10),
+      boardNumber: values.boardNumber,
+      trailerNumber: values.trailerNumber,
+      typee: parseInt(values.typee, 10), // Convert to integer
+      color: parseInt(values.color, 10), // Convert to integer
+      // placeId: parseInt(values.placeId, 10), // Convert to integer
+      driverId: parseInt(values.driverId, 10),
+    };
+
     try {
-      if (isUpdateMode && id !== undefined) {
-        await updateDriver(id, values); // Ensure this call is correct
+      if (isUpdateMode && id) {
+        await updateCar(parseInt(id, 10), carData);
         toast({
           title: "نجاح",
-          description: "تم تحديث بيانات السائق بنجاح",
+          description: "تم تحديث بيانات السيارة بنجاح",
         });
       } else {
-        await addDriver(values); // Ensure this call is correct
+        await addCar(carData);
         toast({
           title: "نجاح",
-          description: "تم إنشاء السائق بنجاح",
+          description: "تم إضافة السيارة بنجاح",
         });
       }
     } catch (error) {
       console.error("Error submitting form:", error);
       toast({
         title: "خطأ",
-        description:
-          "حدثت مشكلة أثناء تقديم النموذج. تحقق من إدخالاتك أو حاول مرة أخرى لاحقًا.",
+        description: "حدثت مشكلة أثناء تقديم النموذج. حاول مرة أخرى لاحقًا.",
       });
     } finally {
       setIsSubmitting(false);
     }
   }
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
-          name="fullName"
+          name="workId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>اسم السائق ثلاثي</FormLabel>
+              <FormLabel>رقم العمل</FormLabel>
               <FormControl>
                 <InputWithEndIcon
-                  icon={User}
-                  placeholder="ادخل اسم  السائق ثلاثي"
+                  icon={Car}
+                  placeholder="ادخل رقم العمل"
                   type="text"
                   {...field}
                 />
@@ -134,36 +135,16 @@ const Truck_from = ({ isUpdateMode = false, id }: DriverFormProps) => {
             </FormItem>
           )}
         />
-
         <FormField
           control={form.control}
-          name="phoneNumber"
+          name="boardNumber"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>رقم الهاتف</FormLabel>
-              <FormControl>
-                <InputNumberIcon
-                  icon={Phone}
-                  placeholder="ادخل رقم  الهاتف "
-                  type="text"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="cardId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>رقم البطاقة الشخصية</FormLabel>
+              <FormLabel>رقم الطارقة</FormLabel>
               <FormControl>
                 <InputWithEndIcon
-                  icon={User}
-                  placeholder="ادخل رقم  البطاقة الشخصية"
+                  icon={Car}
+                  placeholder="ادخل رقم الطارقة"
                   type="text"
                   {...field}
                 />
@@ -172,17 +153,16 @@ const Truck_from = ({ isUpdateMode = false, id }: DriverFormProps) => {
             </FormItem>
           )}
         />
-
         <FormField
           control={form.control}
-          name="driverCardId"
+          name="trailerNumber"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>رقم رخصة القيادة</FormLabel>
+              <FormLabel>رقم المقطورة</FormLabel>
               <FormControl>
                 <InputWithEndIcon
-                  icon={User}
-                  placeholder="ادخل رقم  رخصة القيادة"
+                  icon={Car}
+                  placeholder="ادخل رقم المقطورة"
                   type="text"
                   {...field}
                 />
@@ -192,57 +172,33 @@ const Truck_from = ({ isUpdateMode = false, id }: DriverFormProps) => {
           )}
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
             control={form.control}
-            name="nearestFraindName"
+            name="typee"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>اسم اقرب صديق</FormLabel>
+                <FormLabel>نوع السيارة</FormLabel>
                 <FormControl>
-                  <InputWithEndIcon
-                    icon={User}
-                    placeholder="ادخل اسم  اقرب صديق"
-                    type="text"
-                    {...field}
+                  <CarTypeDropdown
+                    value={field.value}
+                    onChange={(value) => field.onChange(value)}
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
-            name="nearestFraindPhone"
+            name="color"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>رقم الهاتف</FormLabel>
+                <FormLabel>اللون</FormLabel>
                 <FormControl>
-                  <InputNumberIcon
-                    icon={Phone}
-                    placeholder="ادخل رقم  الهاتف "
-                    type="text"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="liveIn"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>عنوان السكن</FormLabel>
-                <FormControl>
-                  <InputWithEndIcon
-                    icon={User}
-                    placeholder="ادخل عنوان السكن"
-                    type="text"
-                    {...field}
+                  <CarColorDropdown
+                    value={field.value}
+                    onChange={(value) => field.onChange(value)}
                   />
                 </FormControl>
                 <FormMessage />
@@ -250,6 +206,38 @@ const Truck_from = ({ isUpdateMode = false, id }: DriverFormProps) => {
             )}
           />
         </div>
+        {/* <FormField
+          control={form.control}
+          name="placeId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>الموقع</FormLabel>
+              <FormControl>
+                <CarAreaDropdown
+                  value={field.value}
+                  onChange={(value) => field.onChange(value)}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        /> */}
+        <FormField
+          control={form.control}
+          name="driverId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>السائق</FormLabel>
+              <FormControl>
+                <DriverDropdown
+                  value={field.value}
+                  onChange={(value) => field.onChange(value)}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <Button type="submit" disabled={isSubmitting}>
           {isSubmitting ? "جارٍ الإرسال..." : isUpdateMode ? "تحديث" : "إنشاء"}

@@ -22,6 +22,7 @@ import InputNumberIcon from "./input/Input-number-icon";
 import { useDriverStore } from "@/stores/useDriverStore";
 import { addDriver, updateDriver } from "@/lib/services/driverService"; // Import the service functions
 import { log } from "console";
+import CityDropdown from "./input/CityDropdown";
 
 // Define form schema with Zod
 const formSchema = z.object({
@@ -64,7 +65,7 @@ const DriverForm = ({ isUpdateMode = false, id }: DriverFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const { selectedDriver, setSelectedDriver } = useDriverStore();
-  console.log(id);
+  
   // Define form setup with default values based on update mode
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -240,11 +241,9 @@ const DriverForm = ({ isUpdateMode = false, id }: DriverFormProps) => {
               <FormItem>
                 <FormLabel>عنوان السكن</FormLabel>
                 <FormControl>
-                  <InputWithEndIcon
-                    icon={User}
-                    placeholder="ادخل عنوان السكن"
-                    type="text"
-                    {...field}
+                  <CityDropdown
+                    value={field.value}
+                    onChange={(value) => field.onChange(value)}
                   />
                 </FormControl>
                 <FormMessage />
