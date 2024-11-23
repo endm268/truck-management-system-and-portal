@@ -24,8 +24,8 @@ interface DataTableRowActionsProps<TData> {
 
 export function DataTableRowActions<
   TData extends {
-    driverId: string | number | undefined;
-    id?: string | number;
+    driverId: any;
+    id?:any;
   }
 >({ row }: DataTableRowActionsProps<TData>) {
  

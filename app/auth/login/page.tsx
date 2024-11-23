@@ -5,7 +5,7 @@ import LoginForm from './_components/login_from';
 
 const Login = () => {
   return (
-    <div className="flex h-screen w-full items-center justify-center px-4">
+    <div className="flex h-screen w-full items-center justify-center">
       <LoginForm />
     </div>
   );

@@ -5,20 +5,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 import { DataTableColumnHeader } from "@/components/table/data-table-column-header";
 import { DataTableRowActions } from "./data-table-row-actions";
+import { Driver } from "@/Types/types";
 
 
 // Define a type for Driver to ensure columns match the structure
-interface Driver {
-  id: number;
-  fullName: string;
-  phoneNumber: string;
-  cardId: string;
-  driverCardId: string;
-  nearestFraindName: string;
-  nearestFraindPhone: string;
-  liveIn: number;
-}
-
 export const driver_columns: ColumnDef<Driver>[] = [
   {
     accessorKey: "driverId",

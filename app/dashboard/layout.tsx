@@ -23,11 +23,11 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
       <Sidebar role={typee} />
       <MobileNav />
       <div className="root-container bg-gray-100 dark:bg-gray-800">
-        <div className="wrapper">
+        <div className="wrapper pb-10">
           <Header />
 
           <ScrollArea
-            className="h-full w-full rounded-md border bg-white dark:bg-gray-900 dark:border-gray-700 p-4"
+            className="h-full w-full p-4 rounded-md border bg-white dark:bg-gray-900 dark:border-gray-700"
             dir="rtl"
           >
             {children}
