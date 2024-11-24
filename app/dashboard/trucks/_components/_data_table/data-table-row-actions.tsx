@@ -28,8 +28,6 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<
   TData extends {
     carId: number;
-    driverId?: string | number | undefined;
-    id?: string | number;
   }
 >({ row }: DataTableRowActionsProps<TData>) {
   const router = useRouter();

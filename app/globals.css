@@ -243,4 +243,40 @@ body {
   }
 }
 
+/* Fixed column base styles */
+.fixed-left {
+  position: sticky;
+  left: 0;
+  z-index: 2; /* Ensure it's above other rows and cells */
+  background-color: #ffff; /* Match the background of the table */
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for better visibility */
+}
 
+/* Fixed column headers */
+.fixed-left-header {
+  position: sticky;
+  left: 0;
+  z-index: 3; /* Higher than the table body rows */
+  background-color: rgb(243 244 246);
+  color: white; /* Optional: Text color for visibility */
+}
+
+/* Prevent other columns from appearing behind the fixed column */
+.fixed-left,
+.fixed-left-header {
+  background-clip: padding-box; /* Prevent background overflow */
+}
+
+/* Sticky header for all columns */
+th {
+  position: sticky;
+  top: 0;
+  z-index: 3; /* Header is above the body */
+  background-color: #f9f9f9; /* Default header background */
+  border-bottom: 1px solid #ddd; /* Optional separator */
+}
+
+/* Adjust table row styles */
+.table-row .fixed-left {
+  background-clip: padding-box; /* Prevent overflow issues */
+}

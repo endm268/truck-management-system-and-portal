@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
-
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-
+import ClientSessionProvider from "@/provider/session-provider"; // Import the client-side provider
 
 export const metadata: Metadata = {
   title: "Asset System",
-  description: "Asset Mangment System",
+  description: "Asset Management System",
 };
 
 export default function RootLayout({
@@ -17,17 +16,13 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning={true}>
       <body className="font-tajawal">
-   
+        <ClientSessionProvider>
           {" "}
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
+          {/* Client-side SessionProvider */}
+          {/* <ThemeProvider attribute="class" defaultTheme="system" enableSystem> */}
             {children}
-          </ThemeProvider>
-     
+          {/* </ThemeProvider> */}
+        </ClientSessionProvider>
       </body>
     </html>
   );

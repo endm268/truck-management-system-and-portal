@@ -41,19 +41,20 @@ export default function LoginForm() {
 
   return (
     <div
-      className="flex h-screen items-center justify-center w-full bg-gradient-to-r from-blue-500 to-purple-600 p-4"
+      className="flex h-screen items-center justify-center w-full bg-white dark:bg-black p-4"
       dir="rtl"
     >
-      <Card className="w-full max-w-sm bg-white shadow-lg rounded-lg p-6">
+      <Card className="w-full max-w-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-lg rounded-lg p-6">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-semibold text-gray-700">
-            تسجيل الدخول
-          </CardTitle>
+          <CardTitle className="text-2xl font-semibold">تسجيل الدخول</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <Label htmlFor="username" className="text-gray-600">
+              <Label
+                htmlFor="username"
+                className="text-gray-600 dark:text-gray-300"
+              >
                 اسم المستخدم
               </Label>
               <Input
@@ -62,11 +63,14 @@ export default function LoginForm() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
-                className="mt-1"
+                className="mt-1 bg-white dark:bg-gray-700 dark:text-gray-100"
               />
             </div>
             <div>
-              <Label htmlFor="password" className="text-gray-600">
+              <Label
+                htmlFor="password"
+                className="text-gray-600 dark:text-gray-300"
+              >
                 كلمة المرور
               </Label>
               <Input
@@ -75,12 +79,12 @@ export default function LoginForm() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="mt-1"
+                className="mt-1 bg-white dark:bg-gray-700 dark:text-gray-100"
               />
             </div>
             <Button
               type="submit"
-              className="w-full bg-blue-500 hover:bg-blue-600"
+              className="w-full bg-blue-500 hover:bg-blue-600 text-white"
             >
               تسجيل الدخول
             </Button>

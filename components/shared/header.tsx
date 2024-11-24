@@ -7,9 +7,9 @@ const Header = () => {
       <div>
         <h1 className="text-2xl font-cairo">نظام ادارة الشاحنات و البوابة</h1>
       </div>
-      <div className="flex items-center gap-4">
+      {/* <div className="flex items-center gap-4">
         <ModeToggle />
-      </div>
+      </div> */}
     </div>
   );
 };

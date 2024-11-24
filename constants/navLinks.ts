@@ -23,13 +23,13 @@ export const navLinks: NavLinkDetail[] = [
     icon: LayoutDashboard,
     visible: ["admin", "financial", "bitah", "jiraar", "matarish"],
   },
-  {
-    id: 2,
-    label: "المستخدمون",
-    route: "/dashboard/users",
-    icon: Users,
-    visible: ["admin"],
-  },
+  // {
+  //   id: 2,
+  //   label: "المستخدمون",
+  //   route: "/dashboard/users",
+  //   icon: Users,
+  //   visible: ["admin"],
+  // },
   {
     id: 3,
     label: "السائقين",

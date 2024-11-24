@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import { TrendingUp } from 'lucide-react';
-import { Label, Pie, PieChart } from 'recharts';
+import * as React from "react";
+import { TrendingUp } from "lucide-react";
+import { Label, Pie, PieChart } from "recharts";
 
 import {
   Card,
@@ -10,46 +10,49 @@ import {
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+  CardTitle,
+} from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
-  ChartTooltipContent
-} from '@/components/ui/chart';
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+
+// Chart data with Arabic truck types
 const chartData = [
-  { browser: 'chrome', visitors: 275, fill: 'var(--color-chrome)' },
-  { browser: 'safari', visitors: 200, fill: 'var(--color-safari)' },
-  { browser: 'firefox', visitors: 287, fill: 'var(--color-firefox)' },
-  { browser: 'edge', visitors: 173, fill: 'var(--color-edge)' },
-  { browser: 'other', visitors: 190, fill: 'var(--color-other)' }
+  { type: "قلاب", visitors: 275, fill: "var(--color-qalab)" },
+  { type: "سطحة", visitors: 200, fill: "var(--color-sataha)" },
+  { type: "قلاب صغير", visitors: 287, fill: "var(--color-qalab-saghir)" },
+  { type: "شاحنة", visitors: 173, fill: "var(--color-shahina)" },
+  { type: "آخر", visitors: 190, fill: "var(--color-akhir)" },
 ];
 
+// Chart configuration with Arabic labels
 const chartConfig = {
   visitors: {
-    label: 'Visitors'
+    label: "الزوار",
   },
-  chrome: {
-    label: 'Chrome',
-    color: 'hsl(var(--chart-1))'
+  qalab: {
+    label: "قلاب",
+    color: "hsl(var(--chart-1))",
   },
-  safari: {
-    label: 'Safari',
-    color: 'hsl(var(--chart-2))'
+  sataha: {
+    label: "سطحة",
+    color: "hsl(var(--chart-2))",
   },
-  firefox: {
-    label: 'Firefox',
-    color: 'hsl(var(--chart-3))'
+  qalabSaghir: {
+    label: "قلاب صغير",
+    color: "hsl(var(--chart-3))",
   },
-  edge: {
-    label: 'Edge',
-    color: 'hsl(var(--chart-4))'
+  shahina: {
+    label: "شاحنة",
+    color: "hsl(var(--chart-4))",
   },
-  other: {
-    label: 'Other',
-    color: 'hsl(var(--chart-5))'
-  }
+  akhir: {
+    label: "آخر",
+    color: "hsl(var(--chart-5))",
+  },
 } satisfies ChartConfig;
 
 export function PieGraph() {
@@ -58,10 +61,13 @@ export function PieGraph() {
   }, []);
 
   return (
-    <Card className="flex flex-col">
+    <Card
+      dir="rtl"
+      className="flex flex-col bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+    >
       <CardHeader className="items-center pb-0">
-        <CardTitle>Pie Chart - Donut with Text</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>مخطط دائري - شاحنات</CardTitle>
+        <CardDescription>بيانات من يناير إلى يونيو 2024</CardDescription>
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <ChartContainer
@@ -76,13 +82,15 @@ export function PieGraph() {
             <Pie
               data={chartData}
               dataKey="visitors"
-              nameKey="browser"
+              nameKey="type"
               innerRadius={60}
+              outerRadius={100}
               strokeWidth={5}
+              fillOpacity={1}
             >
               <Label
                 content={({ viewBox }) => {
-                  if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
+                  if (viewBox && "cx" in viewBox && "cy" in viewBox) {
                     return (
                       <text
                         x={viewBox.cx}
@@ -100,9 +108,9 @@ export function PieGraph() {
                         <tspan
                           x={viewBox.cx}
                           y={(viewBox.cy || 0) + 24}
-                          className="fill-muted-foreground"
+                          className="fill-muted-foreground text-base"
                         >
-                          Visitors
+                          إجمالي الزوار
                         </tspan>
                       </text>
                     );
@@ -115,10 +123,11 @@ export function PieGraph() {
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
         <div className="flex items-center gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+          زيادة بنسبة 5.2٪ هذا الشهر{" "}
+          <TrendingUp className="h-4 w-4 text-green-500" />
         </div>
         <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
+          عرض إجمالي الزوار للأشهر الستة الماضية
         </div>
       </CardFooter>
     </Card>

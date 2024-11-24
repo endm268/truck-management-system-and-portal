@@ -7,20 +7,34 @@ export const incomeType = [
   { id: 2, label: "Expense", value: "expense" },
 ];
 
-export const categories: {
+export const areaName: {
   id: number;
   label: string;
   value: string;
   icon?: ComponentType<{ className?: string }>;
 }[] = [
-  { id: 1, label: "Food", value: "food" },
-  { id: 2, label: "Transportation", value: "transportation" },
-  { id: 3, label: "Entertainment", value: "entertainment" },
-  { id: 4, label: "Health", value: "health" },
-  { id: 5, label: "Education", value: "education" },
-  { id: 6, label: "Utilities", value: "utilities" },
-  { id: 7, label: "Groceries", value: "groceries" },
-  { id: 8, label: "Rent", value: "rent" },
-  { id: 9, label: "Travel", value: "travel" },
-  { id: 10, label: "Miscellaneous", value: "miscellaneous" },
+  { id: 1, label: "البطاح", value: "البطاح" },
+  { id: 2, label: "الجرار", value: "الجرار" },
+  { id: 3, label: "المطريش", value: "المطريش" },
 ];
+
+export const columnNamesView: Record<string, string> = {
+  driverId: "رقم السائق",
+  driverName: " اسم السائق",
+  phoneNumber: "رقم الهاتف السائق",
+  cardId: "رقم للبطاقة الشخصية",
+  driverCardId: "رقم رخصة السائق",
+  nearestFraindName: "اسم الصديق القريب",
+  nearestFraindPhone: "رقم هاتف الصديق القريب",
+  liveInName: "اسم المنزل",
+  carId: "رقم السيارة",
+  workNumber: "رقم العمل",
+  boardNumber: "رقم اللوحة",
+  trailerNumber: "رقم المقطورة",
+  carTypeName: "نوع السيارة",
+  carTypeId: "رقم نوع السيارة",
+  colorName: "لون السيارة",
+  areaName: "اسم المنطقة",
+  fullName: "اسم السائق",
+};
+

@@ -24,12 +24,11 @@ import React, { useState } from "react";
 import { DataTablePagination } from "./data-table-pagination";
 import { DataTableToolbar } from "./data-table-toolbar";
 
-
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   disabled?: boolean;
-  type?: string
+  type?: string;
 }
 
 export function DataTable<TData, TValue>({
@@ -42,9 +41,7 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
-
-  });
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
 
   const table = useReactTable({
@@ -66,21 +63,19 @@ export function DataTable<TData, TValue>({
     },
   });
 
-  
   return (
     <div className="flex flex-col gap-4 border-white">
-      {/* toolbar table */}
+      {/* Toolbar Section */}
       <DataTableToolbar table={table} />
 
-      {/* div table */}
-      <div className="rounded-md border border-gray-200 dark:border-gray-500">
-        {" "}
-        {/* Border white in dark mode */}
+      {/* Table Section */}
+      <div className="rounded-md border border-gray-200 dark:border-gray-700">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
+                {headerGroup.headers.map((header, index) => {
+                  const isLastColumn = index === headerGroup.headers.length - 1; // Check if it's the last column
                   return (
                     <TableHead
                       key={header.id}
@@ -88,7 +83,11 @@ export function DataTable<TData, TValue>({
                         minWidth: header.column.columnDef.size,
                         maxWidth: header.column.columnDef.size,
                       }}
-                      className="text-center bg-gray-100 dark:bg-gray-800 dark:text-gray-300" // Add background and text color for dark mode
+                      className={`text-center ${
+                        isLastColumn
+                          ? "fixed-left-header"
+                          : "bg-gray-100 dark:bg-gray-800 dark:text-white"
+                      }`}
                     >
                       {header.isPlaceholder
                         ? null
@@ -108,23 +107,32 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="hover:bg-gray-200 dark:hover:bg-gray-700 dark:text-gray-300"
+                  className="hover:bg-gray-200 dark:hover:bg-gray-700 dark:text-white"
                 >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="dark:text-gray-300">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
+                  {row.getVisibleCells().map((cell, index) => {
+                    const isLastColumn =
+                      index === row.getVisibleCells().length - 1; // Check if it's the last column
+                    return (
+                      <TableCell
+                        key={cell.id}
+                        className={`dark:text-white ${
+                          isLastColumn ? "fixed-left" : ""
+                        }`}
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    );
+                  })}
                 </TableRow>
               ))
             ) : (
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center dark:text-gray-300"
+                  className="h-24 text-center dark:bg-gray-800 dark:text-white"
                 >
                   لا توجد نتائج.
                 </TableCell>
@@ -133,6 +141,8 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
+
+      {/* Pagination Section */}
       <DataTablePagination table={table} />
     </div>
   );

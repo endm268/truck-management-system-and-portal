@@ -9,19 +9,25 @@ import {
   removeCarFromQueue,
 } from "@/lib/services/queuService";
 import { Queue } from "@/Types/types";
-import { queue_columns } from "./_data_table/driver_columns";
+import { getQueueColumns } from "./_data_table/queue_columns"; // Updated import
+import { getSession } from "next-auth/react";
 
 const QueuisListing = () => {
   const [queues, setQueues] = useState<Queue[]>([]);
+  const [columns, setColumns] = useState<any[]>([]); // Dynamic columns
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchQueueData = async () => {
       try {
+        const session = await getSession();
+        if (session) {
+          const userType = session.user.type; // Retrieve user type
+          const dynamicColumns = getQueueColumns(userType);
+          setColumns(dynamicColumns); // Set columns dynamically
+        }
         const data = await getQueuedCars();
-        console.log("Queue data:", data);
-
         setQueues(data);
       } catch (error) {
         console.error("An error occurred while fetching queues:", error);
@@ -42,7 +48,7 @@ const QueuisListing = () => {
         <div className="text-red-500 text-center">{error}</div>
       ) : (
         <div>
-          <DataTable columns={queue_columns} data={queues} />
+          <DataTable columns={columns} data={queues} />
         </div>
       )}
     </div>

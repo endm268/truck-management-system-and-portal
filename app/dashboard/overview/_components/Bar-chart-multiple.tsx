@@ -1,101 +1,104 @@
-'use client';
+"use client";
 
-import { TrendingUp } from 'lucide-react';
-import { Bar, BarChart, CartesianGrid, XAxis, Tooltip } from 'recharts';
+import { useEffect, useState } from "react";
+import { TrendingUp } from "lucide-react";
+import { Bar, BarChart, CartesianGrid, XAxis, Tooltip } from "recharts";
 import {
   Card,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle
-} from '@/components/ui/card';
+  CardTitle,
+} from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
-  ChartTooltipContent
-} from '@/components/ui/chart';
+  ChartTooltipContent,
+} from "@/components/ui/chart";
 
 // Chart description
-export const description = 'مخطط عمودي متعدد';
+export const description = "مخطط عمودي متعدد";
 
 // Arabic month names
 const arabicMonths = [
-  'يناير',
-  'فبراير',
-  'مارس',
-  'أبريل',
-  'مايو',
-  'يونيو',
-  'يوليو',
-  'أغسطس',
-  'سبتمبر',
-  'أكتوبر',
-  'نوفمبر',
-  'ديسمبر'
+  "يناير",
+  "فبراير",
+  "مارس",
+  "أبريل",
+  "مايو",
+  "يونيو",
+  "يوليو",
+  "أغسطس",
+  "سبتمبر",
+  "أكتوبر",
+  "نوفمبر",
+  "ديسمبر",
 ];
 
-// Function to generate the last 6 months of data dynamically
-function generateLastSixMonthsData() {
-  const data = [];
-  const today = new Date();
-
-  for (let i = 5; i >= 0; i--) {
-    const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
-    const monthName = arabicMonths[date.getMonth()];
-    data.push({
-      month: monthName,
-      desktop: Math.floor(Math.random() * 300) + 100, // Random desktop data
-      mobile: Math.floor(Math.random() * 200) + 50, // Random mobile data
-      laptop: Math.floor(Math.random() * 250) + 75 // Random laptop data
-    });
-  }
-
-  return data;
-}
-
-// Fetch dynamically generated data
-const chartData = generateLastSixMonthsData();
+// Mock static data for server rendering
+const staticChartData = Array.from({ length: 6 }).map((_, i) => ({
+  month: arabicMonths[i],
+  بتاح: 0,
+  جرار: 0,
+  المطاريش: 0,
+}));
 
 // Define chart configuration
 const chartConfig: ChartConfig = {
-  desktop: {
-    label: 'سطح المكتب',
-    color: 'hsl(var(--chart-1))'
+  بتاح: {
+    label: "بتاح",
+    color: "hsl(var(--chart-1))",
   },
-  mobile: {
-    label: 'الهاتف المحمول',
-    color: 'hsl(var(--chart-2))'
+  جرار: {
+    label: "جرار",
+    color: "hsl(var(--chart-2))",
   },
-  laptop: {
-    label: 'الحاسوب المحمول',
-    color: 'hsl(var(--chart-3))'
-  }
+  المطاريش: {
+    label: "المطاريش",
+    color: "hsl(var(--chart-3))",
+  },
 };
 
-// Calculate the total visitors and percentage increase for the current month
-const currentMonthData = chartData[chartData.length - 1];
-const previousMonthData = chartData[chartData.length - 2];
-const totalCurrentMonthVisitors =
-  currentMonthData.desktop + currentMonthData.mobile + currentMonthData.laptop;
-const totalPreviousMonthVisitors =
-  previousMonthData.desktop +
-  previousMonthData.mobile +
-  previousMonthData.laptop;
-const percentageIncrease =
-  ((totalCurrentMonthVisitors - totalPreviousMonthVisitors) /
-    totalPreviousMonthVisitors) *
-  100;
-
 export function BarChartMultiple() {
+  const [chartData, setChartData] = useState(staticChartData);
+
+  // Generate dynamic data on the client
+  useEffect(() => {
+    const today = new Date();
+    const dynamicData = Array.from({ length: 6 }).map((_, i) => {
+      const date = new Date(today.getFullYear(), today.getMonth() - i, 1);
+      const monthName = arabicMonths[date.getMonth()];
+      return {
+        month: monthName,
+        بتاح: Math.floor(Math.random() * 300) + 100,
+        جرار: Math.floor(Math.random() * 200) + 50,
+        المطاريش: Math.floor(Math.random() * 250) + 75,
+      };
+    });
+    setChartData(dynamicData.reverse());
+  }, []);
+
+  // Calculate the total visitors and percentage increase for the current month
+  const currentMonthData = chartData[chartData.length - 1];
+  const previousMonthData = chartData[chartData.length - 2];
+  const totalCurrentMonthVisitors =
+    currentMonthData?.بتاح +
+      currentMonthData?.جرار +
+      currentMonthData?.المطاريش || 0;
+  const totalPreviousMonthVisitors =
+    previousMonthData?.بتاح +
+      previousMonthData?.جرار +
+      previousMonthData?.المطاريش || 0;
+  const percentageIncrease =
+    totalPreviousMonthVisitors > 0
+      ? ((totalCurrentMonthVisitors - totalPreviousMonthVisitors) /
+          totalPreviousMonthVisitors) *
+        100
+      : 0;
+
   return (
-    <Card
-      dir="rtl"
-      className="
-     dark:bg-gray-800
-     dark:text-gray-100
-  "
-    >
+    <Card dir="rtl" className="dark:bg-gray-800 dark:text-gray-100">
       <CardHeader>
         <CardTitle>مخطط عمودي - متعدد</CardTitle>
         <CardDescription>البيانات للأشهر الستة الماضية</CardDescription>
@@ -118,18 +121,18 @@ export function BarChartMultiple() {
             />
             <Tooltip content={<ChartTooltipContent />} />
             <Bar
-              dataKey="desktop"
-              fill={chartConfig.desktop.color}
+              dataKey="بتاح"
+              fill={chartConfig.بتاح.color}
               radius={[4, 4, 0, 0]}
             />
             <Bar
-              dataKey="mobile"
-              fill={chartConfig.mobile.color}
+              dataKey="جرار"
+              fill={chartConfig.جرار.color}
               radius={[4, 4, 0, 0]}
             />
             <Bar
-              dataKey="laptop"
-              fill={chartConfig.laptop.color}
+              dataKey="المطاريش"
+              fill={chartConfig.المطاريش.color}
               radius={[4, 4, 0, 0]}
             />
           </BarChart>
@@ -137,10 +140,10 @@ export function BarChartMultiple() {
       </CardContent>
       <CardFooter className="flex-col items-start gap-6 text-base">
         <div className="flex gap-2 text-lg font-semibold leading-none">
-          زيادة بنسبة {percentageIncrease.toFixed(1)}٪ هذا الشهر{' '}
+          زيادة بنسبة {percentageIncrease.toFixed(1)}٪ هذا الشهر{" "}
           <TrendingUp
             className={`h-5 w-5 ${
-              percentageIncrease >= 0 ? 'text-green-600' : 'text-red-600'
+              percentageIncrease >= 0 ? "text-green-600" : "text-red-600"
             }`}
           />
         </div>
@@ -149,25 +152,16 @@ export function BarChartMultiple() {
         </div>
         <div className="mt-2 flex w-full items-center justify-between text-base">
           <div className="leading-none text-muted-foreground">
-            سطح المكتب: {currentMonthData.desktop.toLocaleString()}
+            بتاح: {currentMonthData?.بتاح?.toLocaleString()}
           </div>
           <div className="leading-none text-muted-foreground">
-            الهاتف المحمول: {currentMonthData.mobile.toLocaleString()}
+            جرار: {currentMonthData?.جرار?.toLocaleString()}
           </div>
           <div className="leading-none text-muted-foreground">
-            الحاسوب المحمول: {currentMonthData.laptop.toLocaleString()}
+            المطاريش: {currentMonthData?.المطاريش?.toLocaleString()}
           </div>
         </div>
       </CardFooter>
     </Card>
   );
 }
-
-// const chartData = [
-//   { month: 'January', desktop: 186, mobile: 80 },
-//   { month: 'February', desktop: 305, mobile: 200 },
-//   { month: 'March', desktop: 237, mobile: 120 },
-//   { month: 'April', desktop: 73, mobile: 190 },
-//   { month: 'May', desktop: 209, mobile: 130 },
-//   { month: 'June', desktop: 214, mobile: 140 }
-// ];

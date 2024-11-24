@@ -1,11 +1,11 @@
 {
-  "name": "next-dashboard",
+  "name": "truck-management-system-and-portal",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --port 3004",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 3004",
     "lint": "next lint"
   },
   "dependencies": {
@@ -46,6 +46,7 @@
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^1.1.1",
+    "xlsx": "^0.18.5",
     "zod": "^3.23.8",
     "zustand": "^4.5.5"
   },

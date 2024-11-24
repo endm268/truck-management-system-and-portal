@@ -157,6 +157,7 @@ const Truck_view = () => {
             <span className="font-semibold text-gray-900">اللون:</span>{" "}
             {selectedTruck.colorName}
           </p>
+          selectedTruck
           <p className="text-gray-700">
             <span className="font-semibold text-gray-900">السائق:</span>{" "}
             {selectedTruck.driverName}

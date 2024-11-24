@@ -4,7 +4,6 @@ import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/table/data-table-column-header";
 import { DataTableRowActions } from "./data-table-row-actions";
 import { Truck } from "@/Types/types";
-import { log } from "console";
 
 export async function getDriverColumns(
   userType: string
@@ -170,9 +169,9 @@ export async function getDriverColumns(
     },
   ];
 
-  // Conditionally add the "areaName" column for admins
+  // Conditionally add the "areaName" column after "carTypeName" for admins
   if (userType === "admin") {
-    driver_columns.push({
+    const areaNameColumn: ColumnDef<Truck> = {
       accessorKey: "areaName",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="ساحة" />
@@ -182,7 +181,15 @@ export async function getDriverColumns(
           {row.getValue("areaName")}
         </div>
       ),
-    });
+    };
+
+    const carTypeNameIndex = driver_columns.findIndex(
+      (column) => column.accessorKey === "carTypeName"
+    );
+
+    if (carTypeNameIndex !== -1) {
+      driver_columns.splice(carTypeNameIndex + 1, 0, areaNameColumn);
+    }
   }
 
   return driver_columns;
