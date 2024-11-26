@@ -96,6 +96,15 @@ export function DataTableToolbar<TData extends Record<string, any>[]>({
             data={filteredData}
             fileName="table_data.xlsx"
           />
+          
+          <Button
+            onClick={() => setShowPrintOptions((prev) => !prev)}
+            variant="outline"
+            size="sm"
+          >
+            {showPrintOptions ? "إخفاء خيارات الطباعة" : "عرض خيارات الطباعة"}
+          </Button>
+
           <DataTableExportCSV data={filteredData} fileName="table_data.csv" />
           <HelloWorldPrint
             data={filteredData}
@@ -110,17 +119,6 @@ export function DataTableToolbar<TData extends Record<string, any>[]>({
           {/* View Options */}
           <DataTableViewOptions table={table} tableKey="data-table" />
         </div>
-      </div>
-
-      {/* Toggle Button for Print Options */}
-      <div className="flex justify-end mt-4">
-        <Button
-          onClick={() => setShowPrintOptions((prev) => !prev)}
-          variant="outline"
-          size="sm"
-        >
-          {showPrintOptions ? "إخفاء خيارات الطباعة" : "عرض خيارات الطباعة"}
-        </Button>
       </div>
 
       {/* Print Options */}
