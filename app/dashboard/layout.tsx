@@ -12,7 +12,7 @@ import { authOptions } from "@/lib/auth";
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   const session = await getServerSession(authOptions);
   if (!session) {
-    redirect("/login");
+    redirect("/auth/login");
   }
   // Extract user data
   const user = session.user;
