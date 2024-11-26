@@ -16,7 +16,7 @@ const Sidebar = ({ role }: SidebarProps) => {
   const pathname = usePathname();
 
   const handleLogout = () => {
-      signOut({ callbackUrl: "http://localhost:3000/auth/login" });
+      signOut({ callbackUrl: "/auth/login" });
   };
 
   return (

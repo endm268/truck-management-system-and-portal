@@ -9,18 +9,18 @@ import { Driver } from "@/Types/types";
 // Function to get driver columns dynamically
 export function getDriverColumns(userType: string): ColumnDef<Driver>[] {
   const driver_columns: ColumnDef<Driver>[] = [
-    {
-      accessorKey: "driverId",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="معرف" />
-      ),
-      cell: ({ row }) => (
-        <div className="w-[20px] capitalize text-gray-700 font-medium">
-          {row.getValue("driverId")}
-        </div>
-      ),
-      size: 100,
-    },
+    // {
+    //   accessorKey: "driverId",
+    //   header: ({ column }) => (
+    //     <DataTableColumnHeader column={column} title="معرف" />
+    //   ),
+    //   cell: ({ row }) => (
+    //     <div className="w-[20px] capitalize text-gray-700 font-medium">
+    //       {row.getValue("driverId")}
+    //     </div>
+    //   ),
+    //   size: 100,
+    // },
     {
       accessorKey: "fullName",
       header: ({ column }) => (
@@ -65,39 +65,7 @@ export function getDriverColumns(userType: string): ColumnDef<Driver>[] {
         </div>
       ),
     },
-    {
-      accessorKey: "nearestFraindName",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="اسم الصديق الأقرب" />
-      ),
-      cell: ({ row }) => (
-        <div className="w-[150px] text-gray-700 font-medium">
-          {row.getValue("nearestFraindName")}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "nearestFraindPhone",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="هاتف الصديق الأقرب" />
-      ),
-      cell: ({ row }) => (
-        <div className="w-[150px] text-gray-700 font-medium">
-          {row.getValue("nearestFraindPhone")}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "liveInName",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="يعيش في" />
-      ),
-      cell: ({ row }) => (
-        <div className="w-[100px] text-gray-700 font-medium">
-          {row.getValue("liveInName")}
-        </div>
-      ),
-    },
+   
     {
       id: "actions",
       cell: ({ row }) => <DataTableRowActions row={row} />,

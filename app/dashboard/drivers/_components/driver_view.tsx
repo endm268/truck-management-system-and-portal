@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState } from "react";
 import { useDriverStore } from "@/stores/useDriverStore";
 import { Button } from "@/components/ui/button";
@@ -16,23 +17,50 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useRouter } from "next/navigation";
 import HeaderPage from "@/components/shared/headerPage";
+import { deleteDriver } from "@/lib/services/driverService"; // Import deleteDriver function
+import { useToast } from "@/hooks/use-toast"; // Assuming you have a toast hook for notifications
 
 const Driver_view = () => {
   const { selectedDriver, setSelectedDriver } = useDriverStore();
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const router = useRouter();
+  const { toast } = useToast();
 
   const handleEdit = () => {
-    router.push("/dashboard/drivers/update");
+    router.push(`/dashboard/drivers/${selectedDriver.id}/update`);
   };
 
-  const handleDelete = () => {
-    console.log("Delete action confirmed for:", selectedDriver);
-    setIsAlertOpen(false);
-  };
+  const handleDelete = async () => {
+    try {
+      if (!selectedDriver?.id) {
+        throw new Error("No driver selected for deletion.");
+      }
 
-  const handlePrint = () => {
-    router.push("/dashboard/drivers/print");
+      // Call the deleteDriver API
+      const response = await deleteDriver(selectedDriver.id);
+
+      // Show success toast notification
+      toast({
+        title: "تم الحذف بنجاح",
+        description: response.message,
+        variant: "default",
+      });
+
+      // Reset selected driver and navigate back to drivers list
+      setSelectedDriver(null);
+      router.push("/dashboard/drivers");
+    } catch (error: any) {
+      console.error("Error deleting driver:", error);
+
+      // Show error toast notification
+      toast({
+        title: "حدث خطأ",
+        description: error.message || "تعذر حذف السائق. حاول مجددًا لاحقًا.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsAlertOpen(false);
+    }
   };
 
   const handleReturn = () => {
@@ -140,7 +168,7 @@ const Driver_view = () => {
           </p>
           <p className="text-gray-700">
             <span className="font-semibold text-gray-900">العنوان:</span>{" "}
-            {selectedDriver.liveIn}
+            {selectedDriver.liveInName}
           </p>
         </div>
       </div>

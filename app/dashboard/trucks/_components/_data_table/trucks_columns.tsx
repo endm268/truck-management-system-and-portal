@@ -9,18 +9,7 @@ export async function getDriverColumns(
   userType: string
 ): Promise<ColumnDef<Truck>[]> {
   const driver_columns: ColumnDef<Truck>[] = [
-    {
-      accessorKey: "carId",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="معرف" />
-      ),
-      cell: ({ row }) => (
-        <div className="w-[20px] capitalize text-gray-700 font-medium">
-          {row.getValue("carId")}
-        </div>
-      ),
-      size: 100,
-    },
+    
     {
       accessorKey: "workNumber",
       header: ({ column }) => (
@@ -97,72 +86,7 @@ export async function getDriverColumns(
         </div>
       ),
     },
-    {
-      accessorKey: "phoneNumber",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="رقم الهاتف" />
-      ),
-      cell: ({ row }) => (
-        <div className="w-[150px] text-gray-700 font-medium">
-          {row.getValue("phoneNumber")}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "cardId",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="رقم البطاقة" />
-      ),
-      cell: ({ row }) => (
-        <div className="w-[100px] text-gray-700 font-medium">
-          {row.getValue("cardId")}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "driverCardId",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="رقم رخصة السائق" />
-      ),
-      cell: ({ row }) => (
-        <div className="w-[100px] text-gray-700 font-medium">
-          {row.getValue("driverCardId")}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "nearestFraindName",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="اسم الصديق الأقرب" />
-      ),
-      cell: ({ row }) => (
-        <div className="w-[150px] text-gray-700 font-medium">
-          {row.getValue("nearestFraindName")}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "nearestFraindPhone",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="هاتف الصديق الأقرب" />
-      ),
-      cell: ({ row }) => (
-        <div className="w-[150px] text-gray-700 font-medium">
-          {row.getValue("nearestFraindPhone")}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "liveInName",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="يعيش في" />
-      ),
-      cell: ({ row }) => (
-        <div className="w-[100px] text-gray-700 font-medium">
-          {row.getValue("liveInName")}
-        </div>
-      ),
-    },
+ 
     {
       id: "actions",
       cell: ({ row }) => <DataTableRowActions row={row} />,

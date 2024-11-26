@@ -25,12 +25,10 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<
   TData extends {
     driverId: any;
-    id?:any;
+    id?: any;
   }
 >({ row }: DataTableRowActionsProps<TData>) {
- 
-
-    const router = useRouter();
+  const router = useRouter();
   const setSelectedDriver = useDriverStore((state) => state.setSelectedDriver);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const { toast } = useToast();
@@ -55,19 +53,15 @@ export function DataTableRowActions<
 
     try {
       const result = await deleteDriver(id as number);
-      console.log("Driver deleted successfully:", result.message);
-      // Show success toast notification
       toast({
         variant: "default",
         title: "تم الحذف بنجاح",
         description: `تم حذف السائق ذو المعرف ${id} بنجاح.`,
       });
-      
       window.location.reload();
     } catch (error: any) {
       console.error("Error during delete request:", error);
 
-      // Show error toast notification
       toast({
         variant: "destructive",
         title: "حدث خطأ",
@@ -75,39 +69,23 @@ export function DataTableRowActions<
       });
     }
 
-    // Close the alert dialog
     setIsAlertOpen(false);
   };
 
-
   return (
     <div className="flex space-x-2 rtl:space-x-reverse" dir="rtl">
-      <Button
-        variant="outline"
-        onClick={handleView}
-        className="text-gray-700 flex items-center space-x-1 rtl:space-x-reverse"
-      >
+      <Button variant="outline" onClick={handleView}>
         <Eye className="h-4 w-4" />
-        <span>عرض</span>
       </Button>
 
-      <Button
-        variant="outline"
-        onClick={handleEdit}
-        className="text-gray-700 flex items-center space-x-1 rtl:space-x-reverse"
-      >
+      <Button variant="outline" onClick={handleEdit}>
         <Pen className="h-4 w-4" />
-        <span>تحديث</span>
       </Button>
 
       <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
         <AlertDialogTrigger asChild>
-          <Button
-            variant="outline"
-            className="text-gray-700 flex items-center space-x-1 rtl:space-x-reverse"
-          >
+          <Button variant="outline">
             <Trash className="h-4 w-4" />
-            <span>حذف</span>
           </Button>
         </AlertDialogTrigger>
         <AlertDialogContent dir="rtl">

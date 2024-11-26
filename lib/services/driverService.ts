@@ -104,11 +104,7 @@ export async function updateDriver(id: string, driverData: any) {
       liveIn: parseInt(driverData.liveIn, 10), // Ensure 'liveIn' is a number
     };
 
-    console.log("here 1 ");
-    console.log("data", driverData);
-    console.log("id", id);
-    console.log("headers", headers);
-    console.log("dataToSend", dataToSend);
+  
 
     const response = await fetch(`${BASE_URL}/Update-Driver`, {
       // Corrected endpoint

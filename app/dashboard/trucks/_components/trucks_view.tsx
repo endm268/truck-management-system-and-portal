@@ -1,8 +1,9 @@
 "use client";
+
 import React, { useState } from "react";
 import { useTruckStore } from "@/stores/useTruckStore";
 import { Button } from "@/components/ui/button";
-import { KeySquare, Pen, Printer, Redo2, Trash, ArrowLeft } from "lucide-react";
+import { KeySquare, Pen, Redo2, Trash, User } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -16,20 +17,22 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useRouter } from "next/navigation";
 import HeaderPage from "@/components/shared/headerPage";
-
 import { useToast } from "@/hooks/use-toast";
-import { deleteCar } from "@/lib/services/trucksService";
-
+import { deleteCar, changeCarOwner } from "@/lib/services/trucksService";
+import DriverDropdown from "./input/DriverDropdown";
 
 const Truck_view = () => {
   const { selectedTruck, setSelectedTruck } = useTruckStore();
-  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
+  const [isChangeOwnerAlertOpen, setIsChangeOwnerAlertOpen] = useState(false);
+  const [newDriverId, setNewDriverId] = useState<string | undefined>(undefined);
+  const [isChangingOwner, setIsChangingOwner] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
 
   const handleEdit = () => {
     if (selectedTruck) {
-      router.push(`/dashboard/trucks/${selectedTruck.id}/update`);
+      router.push(`/dashboard/trucks/${selectedTruck.carId}/update`);
     }
   };
 
@@ -37,13 +40,13 @@ const Truck_view = () => {
     if (!selectedTruck) return;
 
     try {
-      await deleteCar(selectedTruck.id);
+      await deleteCar(selectedTruck.carId);
       toast({
         title: "نجاح",
         description: `تم حذف الشاحنة بنجاح.`,
       });
-      setSelectedTruck(null); // Clear the selected truck
-      router.push("/dashboard/trucks"); // Navigate back to the truck list
+      setSelectedTruck(null);
+      router.push("/dashboard/trucks");
     } catch (error) {
       console.error("Error deleting truck:", error);
       toast({
@@ -52,32 +55,44 @@ const Truck_view = () => {
         description: "تعذر حذف الشاحنة. حاول مجددًا لاحقًا.",
       });
     }
-
-    setIsAlertOpen(false); // Close the alert dialog
+    setIsDeleteAlertOpen(false);
   };
 
-  const handlePrint = () => {
-    if (selectedTruck) {
-      router.push(`/dashboard/trucks/${selectedTruck.id}/print`);
+  const handleChangeOwner = async () => {
+    if (!selectedTruck || !newDriverId) return;
+
+    console.log("Truck ID:", selectedTruck.carId);
+    console.log("New Driver ID:", newDriverId);
+
+    setIsChangingOwner(true);
+    try {
+      await changeCarOwner(selectedTruck.carId, parseInt(newDriverId, 10));
+      toast({
+        title: "نجاح",
+        description: `تم تغيير مالك الشاحنة بنجاح.`,
+      });
+      setIsChangeOwnerAlertOpen(false);
+      router.push("/dashboard/trucks");
+    } catch (error) {
+      console.error("Error changing owner for truck ID:", selectedTruck.carId);
+      console.error("Error details:", error);
+      toast({
+        variant: "destructive",
+        title: "حدث خطأ",
+        description: "تعذر تغيير مالك الشاحنة. حاول مجددًا لاحقًا.",
+      });
     }
-  };
-
-  const handleReturn = () => {
-    router.push("/dashboard/trucks");
+    setIsChangingOwner(false);
   };
 
   if (!selectedTruck) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-gray-600 p-4">
         <p className="mb-4">لم يتم تحديد شاحنة للعرض.</p>
-        <Button onClick={handleReturn} className="flex items-center space-x-1">
-          <ArrowLeft className="h-4 w-4" />
-          <span>العودة إلى قائمة الشاحنات</span>
-        </Button>
       </div>
     );
   }
-  
+
   return (
     <div className="flex flex-col gap-6 p-6 bg-white shadow-md rounded-lg">
       <HeaderPage
@@ -92,6 +107,7 @@ const Truck_view = () => {
 
       {/* Top bar with action buttons */}
       <div className="flex justify-end gap-4 mb-6" dir="rtl">
+        {/* Edit Button */}
         <Button
           variant="outline"
           onClick={handleEdit}
@@ -101,7 +117,54 @@ const Truck_view = () => {
           <span>تحديث</span>
         </Button>
 
-        <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
+        {/* Change Owner Button */}
+        <AlertDialog
+          open={isChangeOwnerAlertOpen}
+          onOpenChange={setIsChangeOwnerAlertOpen}
+        >
+          <AlertDialogTrigger asChild>
+            <Button
+              variant="outline"
+              className="text-gray-700 flex items-center space-x-1 rtl:space-x-reverse"
+            >
+              <User className="h-4 w-4" />
+              <span>تغيير المالك</span>
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent dir="rtl">
+            <AlertDialogHeader>
+              <AlertDialogTitle>تغيير مالك الشاحنة</AlertDialogTitle>
+              <AlertDialogDescription>
+                اختر المالك الجديد للشاحنة من القائمة أدناه.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <div className="p-4">
+              <DriverDropdown
+                value={newDriverId}
+                onChange={(value) => setNewDriverId(value)}
+              />
+            </div>
+            <AlertDialogFooter>
+              <AlertDialogCancel
+                onClick={() => setIsChangeOwnerAlertOpen(false)}
+              >
+                إلغاء
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleChangeOwner}
+                disabled={isChangingOwner || !newDriverId}
+              >
+                {isChangingOwner ? "جارٍ التغيير..." : "تغيير"}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        {/* Delete Button */}
+        <AlertDialog
+          open={isDeleteAlertOpen}
+          onOpenChange={setIsDeleteAlertOpen}
+        >
           <AlertDialogTrigger asChild>
             <Button
               variant="outline"
@@ -113,16 +176,14 @@ const Truck_view = () => {
           </AlertDialogTrigger>
           <AlertDialogContent dir="rtl">
             <AlertDialogHeader>
-              <AlertDialogTitle className="text-red-500 text-right">
-                تأكيد الحذف
-              </AlertDialogTitle>
-              <AlertDialogDescription className="text-right">
+              <AlertDialogTitle>تأكيد الحذف</AlertDialogTitle>
+              <AlertDialogDescription>
                 هل أنت متأكد أنك تريد حذف هذا السجل؟ لا يمكن التراجع عن هذا
                 الإجراء.
               </AlertDialogDescription>
             </AlertDialogHeader>
-            <AlertDialogFooter className="flex rtl:space-x-reverse">
-              <AlertDialogCancel onClick={() => setIsAlertOpen(false)}>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => setIsDeleteAlertOpen(false)}>
                 إلغاء
               </AlertDialogCancel>
               <AlertDialogAction onClick={handleDelete}>حذف</AlertDialogAction>
@@ -139,7 +200,7 @@ const Truck_view = () => {
         <div className="space-y-3">
           <p className="text-gray-700">
             <span className="font-semibold text-gray-900">رقم العمل:</span>{" "}
-            {selectedTruck.workId}
+            {selectedTruck.workNumber}
           </p>
           <p className="text-gray-700">
             <span className="font-semibold text-gray-900">رقم الطارقة:</span>{" "}
@@ -151,13 +212,20 @@ const Truck_view = () => {
           </p>
           <p className="text-gray-700">
             <span className="font-semibold text-gray-900">نوع الشاحنة:</span>{" "}
-            {selectedTruck.typeeName}
+            {selectedTruck.carTypeName}
           </p>
           <p className="text-gray-700">
             <span className="font-semibold text-gray-900">اللون:</span>{" "}
             {selectedTruck.colorName}
           </p>
-          selectedTruck
+          <p className="text-gray-700">
+            <span className="font-semibold text-gray-900">المنطقة:</span>{" "}
+            {selectedTruck.areaName}
+          </p>
+          <p className="text-gray-700">
+            <span className="font-semibold text-gray-900">آخر تحديث:</span>{" "}
+            {new Date(selectedTruck.lastUpdateDate).toLocaleString()}
+          </p>
           <p className="text-gray-700">
             <span className="font-semibold text-gray-900">السائق:</span>{" "}
             {selectedTruck.driverName}
