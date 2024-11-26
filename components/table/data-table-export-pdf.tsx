@@ -2,74 +2,85 @@
 
 import { useRef } from "react";
 import { Button } from "@/components/ui/button";
-import html2pdf from "html2pdf.js";
+import { columnNamesView } from "@/constants/data"; // Import columnNamesView
 
-interface ExportPDFProps<TData extends Record<string, any>> {
+interface PrintProps<TData extends Record<string, any>> {
   data: TData[];
   headers: string[];
-  fileName?: string;
+  visibleColumns: string[];
+  handleToggleColumn: (column: string) => void;
 }
 
-export function DataTableExportPDF<TData extends Record<string, any>>({
+export function HelloWorldPrint<TData extends Record<string, any>>({
   data,
   headers,
-  fileName = "table_data.pdf",
-}: ExportPDFProps<TData>) {
+  visibleColumns = [], // Default to an empty array
+  handleToggleColumn,
+}: PrintProps<TData>) {
   const printRef = useRef<HTMLDivElement>(null);
 
-  const handleExport = () => {
-    if (data.length === 0) {
-      alert("لا توجد بيانات للتصدير!");
-      return;
-    }
-
+  const handlePrint = () => {
     if (printRef.current) {
-      console.log("Exporting content:", printRef.current.innerHTML); // Debug content
-      const element = printRef.current;
-      const options = {
-        margin: [10, 10, 10, 10] as [number, number, number, number],
-        filename: fileName,
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-      };
-      html2pdf().from(element).set(options).save();
+      const printWindow = window.open("", "_blank");
+      if (printWindow) {
+        printWindow.document.write(`<!DOCTYPE html>
+          <html dir="rtl" lang="ar">
+            <head>
+              <title>Print</title>
+              <style>
+                body {
+                  font-family: Arial, sans-serif;
+                  margin: 20px;
+                  padding: 0;
+                  direction: rtl;
+                  text-align: right;
+                }
+                table {
+                  width: 100%;
+                  border-collapse: collapse;
+                  margin-top: 20px;
+                }
+                th, td {
+                  border: 1px solid #ddd;
+                  text-align: right;
+                  padding: 8px;
+                  word-wrap: break-word;
+                }
+                th {
+                  background-color: #f4f4f4;
+                }
+              </style>
+            </head>
+            <body>
+              ${printRef.current.innerHTML}
+            </body>
+          </html>
+        `);
+        printWindow.document.close();
+        printWindow.focus();
+        printWindow.print();
+        printWindow.close();
+      }
     }
   };
 
   return (
     <>
-      <div
-        ref={printRef}
-        style={{ position: "absolute", top: "-10000px", left: "-10000px" }}
-        className="p-6 bg-white text-black dark:bg-gray-800 dark:text-white"
-      >
-        <h1 className="text-center text-xl font-bold mb-4">تقرير البيانات</h1>
-        <table className="w-full border-collapse border border-gray-300 dark:border-gray-700">
+      {/* Hidden content for printing */}
+      <div ref={printRef} style={{ display: "none" }}>
+        <table>
           <thead>
-            <tr className="bg-gray-200 dark:bg-gray-700">
-              {headers.map((header, index) => (
-                <th
-                  key={index}
-                  className="border border-gray-300 dark:border-gray-700 p-2 text-right"
-                >
-                  {header}
-                </th>
+            <tr>
+              {visibleColumns.map((header, index) => (
+                <th key={index}>{columnNamesView[header] || header}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {data.map((row, rowIndex) => (
-              <tr
-                key={rowIndex}
-                className="odd:bg-gray-100 dark:odd:bg-gray-700"
-              >
-                {headers.map((header, colIndex) => (
-                  <td
-                    key={colIndex}
-                    className="border border-gray-300 dark:border-gray-700 p-2 text-right"
-                  >
-                    {row[header]?.toString() || ""}
-                  </td>
+              <tr key={rowIndex}>
+                {visibleColumns.map((header, colIndex) => (
+                  <td key={colIndex}>{row[header]}</td>
                 ))}
               </tr>
             ))}
@@ -77,8 +88,9 @@ export function DataTableExportPDF<TData extends Record<string, any>>({
         </table>
       </div>
 
-      <Button onClick={handleExport} variant="outline" size="sm">
-        تصدير إلى PDF
+      {/* Button to trigger printing */}
+      <Button onClick={handlePrint} variant="outline" size="sm">
+        Print
       </Button>
     </>
   );
