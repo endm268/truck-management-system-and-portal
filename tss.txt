@@ -1,3 +1,4 @@
 AUTH_SECRET="tWbe+WNTkp9XzDG5agam0c0siQhkVnmAM0C7BIFaVis="
 # change to creact login
 NEXTAUTH_URL=http://localhost:3004
+http://10.10.10.74:3000
