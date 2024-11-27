@@ -26,18 +26,20 @@ const Driver_view = () => {
   const router = useRouter();
   const { toast } = useToast();
 
+  
+
   const handleEdit = () => {
-    router.push(`/dashboard/drivers/${selectedDriver.id}/update`);
+    router.push(`/dashboard/drivers/${selectedDriver.driverId}/update`);
   };
 
   const handleDelete = async () => {
     try {
-      if (!selectedDriver?.id) {
+      if (!selectedDriver?.driverId) {
         throw new Error("No driver selected for deletion.");
       }
 
       // Call the deleteDriver API
-      const response = await deleteDriver(selectedDriver.id);
+      const response = await deleteDriver(selectedDriver.driverId);
 
       // Show success toast notification
       toast({

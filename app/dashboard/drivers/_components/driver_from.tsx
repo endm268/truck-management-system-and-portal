@@ -23,6 +23,7 @@ import { useDriverStore } from "@/stores/useDriverStore";
 import { addDriver, updateDriver } from "@/lib/services/driverService"; // Import the service functions
 import { log } from "console";
 import CityDropdown from "./input/CityDropdown";
+import { useRouter } from "next/navigation";
 
 // Define form schema with Zod
 const formSchema = z.object({
@@ -65,7 +66,7 @@ const DriverForm = ({ isUpdateMode = false, id }: DriverFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const { selectedDriver, setSelectedDriver } = useDriverStore();
-  
+  const router = useRouter();
   // Define form setup with default values based on update mode
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -98,6 +99,7 @@ const DriverForm = ({ isUpdateMode = false, id }: DriverFormProps) => {
           title: "نجاح",
           description: "تم تحديث بيانات السائق بنجاح",
         });
+          router.push("/dashboard/drivers");
       } else {
         await addDriver(values); // Ensure this call is correct
         toast({

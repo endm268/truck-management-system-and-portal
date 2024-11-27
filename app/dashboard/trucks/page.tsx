@@ -15,7 +15,7 @@ const Trucks = () => {
           <Plus className="h-4 w-4 text-gray-300 dark:text-gray-300" />
         }
         route="/dashboard/trucks/create"
-        buttonTitle="اضافة شحنة"
+        buttonTitle="اضافة شاحنة"
       />
       <div>
         <Trucks_listing />
