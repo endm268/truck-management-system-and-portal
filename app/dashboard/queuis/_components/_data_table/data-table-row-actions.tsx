@@ -18,6 +18,7 @@ import {
 import { Trash } from "lucide-react";
 import { removeCarFromQueue } from "@/lib/services/queuService"; // Updated import
 import { useToast } from "@/hooks/use-toast";
+import Invoice_print from "./invoice_print";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -96,6 +97,8 @@ export function DataTableRowActions<
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      
+      <Invoice_print />
     </div>
   );
 }

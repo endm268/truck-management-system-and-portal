@@ -5,6 +5,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&family=Tajawal:wght@200;300;400;500;700;800;900&display=swap");
 
 
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -280,4 +281,31 @@ th {
 /* Adjust table row styles */
 .table-row .fixed-left {
   background-clip: padding-box; /* Prevent overflow issues */
+}
+
+
+@media print {
+  /* Hide browser default print headers and footers */
+  @page {
+    margin: 0;
+  }
+
+  /* Hide unnecessary elements */
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Ensure only the printable content is visible */
+  .hidden {
+    display: none !important;
+  }
+
+  .print-only {
+    display: block !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
 }
